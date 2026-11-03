@@ -33,4 +33,3 @@ if user_input:
         "user":user_input,
         "llama_response":llama_response
     })   
-
