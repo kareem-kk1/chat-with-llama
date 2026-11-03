@@ -1,6 +1,4 @@
 import streamlit as st
-import requests
-import json
 from ollama_response import ollama_response
 
 model = "llama3.1"
