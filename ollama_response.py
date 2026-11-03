@@ -1,7 +1,4 @@
 import ollama
-import time
-
-
 
 def ollama_response(model: str, prompt: str) -> str:
     """
