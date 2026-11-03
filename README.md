@@ -1,4 +1,3 @@
-
 # 🦙 Chat with Llama – Conversational AI Chatbot
 
 A conversational AI chatbot built using **Python, Streamlit, and Ollama (Llama 3.1)**. The application maintains conversation history and uses previous messages as context to generate relevant, context-aware responses.
@@ -31,7 +30,7 @@ Unlike a basic question-answering application, this chatbot can remember earlier
 chat-with-llama/
 │
 ├── chat_with_llama.py      # Main Streamlit application
-├── ollama_response.py      # Ollama model integration
+├── llama_call.py           # Ollama model integration
 ├── requirements.txt        # Project dependencies
 └── README.md               # Project documentation
 ```
@@ -113,63 +112,88 @@ http://localhost:8501
 The chatbot maintains context throughout the conversation.
 
 **User:**
-My name is Kareem.
+What is Artificial Intelligence?
 
 **Llama:**
-Nice to meet you, Kareem!
+Artificial Intelligence (AI) is a branch of computer science that enables machines to perform tasks that typically require human intelligence, such as learning, reasoning, problem-solving, and understanding language.
 
 **User:**
-I am learning Python.
+Can you give me two real-world applications?
 
 **Llama:**
-That's great! Python is a versatile programming language.
+Certainly! Here are two real-world applications of Artificial Intelligence:
 
-**User:**
-What is my name?
-
-**Llama:**
-Your name is Kareem.
-
-**User:**
-What am I learning?
-
-**Llama:**
-You are learning Python.
-
-## 🧠 How Conversation Memory Works
-
-The application uses Streamlit's session state to store conversation history.
-
-Each message is stored with a role and content:
-
-```python
-{
-    "role": "user",
-    "content": "My name is Kareem."
-}
-```
-
-```python
-{
-    "role": "assistant",
-    "content": "Nice to meet you, Kareem!"
-}
-```
-
-The stored conversation is passed to Ollama using its chat interface:
-
-```python
-response = ollama.chat(
-    model=model,
-    messages=messages
-)
-```
-
-This allows Llama to use previous messages as context when generating new responses.
-
-**Note:** This implementation provides session-based memory. Conversation history is not permanently stored and will be lost when the Streamlit session is reset or the application restarts.
+1. **Healthcare:** AI helps doctors analyze medical images, detect diseases, and support clinical decision-making.
+2. **Virtual Assistants:** AI powers assistants that understand voice commands, answer questions, and help users perform everyday tasks.
 
 ## 🔮 Future Enhancements
+
+🧠 How Conversation Memory Works
+
+The application uses Streamlit Session State to maintain conversation history throughout an active chat session.
+
+Every user message and assistant response is stored as a dictionary containing a role and content.
+
+1. Storing Conversation History
+
+User messages are stored with the user role:
+
+{
+    "role": "user",
+    "content": "What is Artificial Intelligence?"
+}
+
+Assistant responses are stored with the assistant role:
+
+{
+    "role": "assistant",
+    "content": "Artificial Intelligence enables machines to perform tasks that typically require human intelligence."
+}
+
+2. Maintaining Context
+
+The application maintains all previous messages in Streamlit's session state:
+
+st.session_state.history.append({
+    "role": "user",
+    "content": user_input
+})
+
+After generating a response, the assistant's message is also added to the conversation history.
+
+st.session_state.history.append({
+    "role": "assistant",
+    "content": response
+})
+
+3. Generating Context-Aware Responses
+
+The complete conversation history is passed to Ollama through its chat interface:
+
+response = ollama.chat(
+    model=model,
+    messages=st.session_state.history
+)
+
+Llama 3.1 processes the previous messages along with the latest user query to generate relevant, context-aware responses.
+
+For example, if a user asks about Artificial Intelligence, then asks about its applications, and later refers to one of those applications, Llama can use the earlier conversation to understand the context.
+
+4. Memory Management
+
+The application provides session-based conversation memory with the following capabilities:
+
+Stores previous user and assistant messages.
+
+Retains conversation context during Streamlit reruns.
+
+Supports follow-up questions based on earlier messages.
+
+Displays the complete conversation in the chat interface.
+
+Allows users to clear the conversation using the Clear Chat button.
+
+Note: This implementation uses temporary, session-based memory rather than permanent storage. Conversation history is not saved to a database and may be lost when the session ends or the application restarts.
 
 - Persistent conversation storage using SQLite.
 - Long-term memory across multiple chat sessions.
